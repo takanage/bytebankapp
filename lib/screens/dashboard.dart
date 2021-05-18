@@ -21,14 +21,26 @@ class Dashboard extends StatelessWidget {
               _FeatureItem(
                 'Transfer',
                 Icons.monetization_on,
+                onClick: () {
+                  _showContactList(context);
+                },
               ),
               _FeatureItem(
                 'Transaction feed',
                 Icons.description,
+                onClick: () => print('Transaction feed was clicked.'),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showContactList(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ContactsList(),
       ),
     );
   }
@@ -37,8 +49,13 @@ class Dashboard extends StatelessWidget {
 class _FeatureItem extends StatelessWidget {
   final String name;
   final IconData icon;
+  final Function onClick;
 
-  _FeatureItem(this.name, this.icon);
+  _FeatureItem(
+    this.name,
+    this.icon, {
+    @required this.onClick,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +64,7 @@ class _FeatureItem extends StatelessWidget {
       child: Material(
         color: Theme.of(context).primaryColor,
         child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ContactsList(),
-              ),
-            );
-          },
+          onTap: () => onClick(),
           child: Container(
             padding: EdgeInsets.all(8),
             height: 100,
