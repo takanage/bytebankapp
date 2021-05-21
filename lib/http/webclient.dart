@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/models/transaction.dart';
 import 'package:http/http.dart';
@@ -31,12 +30,14 @@ Future<List<Transaction>> findAll() async {
     interceptors: [LoggingInterceptor()],
   );
   final Response response =
-      await client.get(Uri.http('192.168.0.106:8080', 'transactions'));
+      await client.get(Uri.http('192.168.0.106:8080', 'transactions')).timeout(
+            Duration(seconds: 5),
+          );
   final List<dynamic> decodedJson = jsonDecode(response.body);
   final List<Transaction> transactions = [];
   for (Map<String, dynamic> transactionJson in decodedJson) {
-    final Map<String, dynamic> contactJson = transactionJson ['contact'];
-     final Transaction transaction = Transaction(
+    final Map<String, dynamic> contactJson = transactionJson['contact'];
+    final Transaction transaction = Transaction(
       transactionJson['value'],
       Contact(
         0,
@@ -44,7 +45,7 @@ Future<List<Transaction>> findAll() async {
         contactJson['accountNumber'],
       ),
     );
-     transactions.add(transaction);
+    transactions.add(transaction);
   }
   return transactions;
   print('decode json $decodedJson');
