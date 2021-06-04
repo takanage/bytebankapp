@@ -25,14 +25,19 @@ class TransactionWebClient {
         },
         body: transactionJson);
 
-    if (response.statusCode == 400){
-      throw Exception('There was an error. Submitting transaction.');
-
-    }
-    if (response.statusCode == 401) {
-      throw Exception('There was an error. Authentication failed.');
+    if (response.statusCode == 200) {
+      return Transaction.fromJson(jsonDecode(response.body));
     }
 
-    return Transaction.fromJson(jsonDecode(response.body));
+    _throwHttpError(response.statusCode);
   }
+
+  void _throwHttpError(int statusCode) {
+    throw Exception(_statusCodeResponses[statusCode]);
+  }
+
+  static final Map<int, String> _statusCodeResponses = {
+    400: 'There was an error. Submitting transaction.',
+    401: 'There was an error. Authentication failed.'
+  };
 }
